@@ -1,7 +1,7 @@
-from itertools import count
 import tweepy
 from decouple import config
 from typing import Optional, List
+from pydantic import BaseModel
 
 
 apikey = config("APIKEY")
@@ -13,6 +13,29 @@ auth = tweepy.OAuthHandler(apikey, apisecret)
 auth.set_access_token(access_token,access_token_secret)
 
 api = tweepy.API(auth)
+
+class Tweetdantic(BaseModel):
+    dp: str
+    at: str
+    name: str
+    likes: int
+    retweets: int
+    tweet: str
+    url: str
+
+class Tweetrequest(BaseModel):
+    at: str
+    keyword: str
+
+
+t = ('%a %d %b,%Y %I:%M %p')
+
+mytest = api.home_timeline()
+print(mytest[0].text)
+print(mytest[0].user.name)
+print(mytest[0].user.profile_image_url)
+print(mytest[0].favorite_count)
+
 
 def getweetkeywords(keyword: str, user: str):
     # KEYWORD WAS HAVE A MIN OF THREE CHARACTERS
@@ -27,6 +50,10 @@ def getweetkeywords(keyword: str, user: str):
                     if(y.text.lower().find(keyword.lower()) != -1):
                         basket.append(y)
                         print(y.text)
+                        print(f'profile url: {y.user.profile_image_url}')
+                        print(f'name: {y.user.name}')
+                        print(y.created_at.strftime(t))
+                        print(f'likes: {y.favorite_count}')
                         print(f'retweets: {y.retweet_count}')
                         print('---------------------')
                 # return basket   
@@ -38,5 +65,5 @@ def getweetkeywords(keyword: str, user: str):
     except:
         print("User like that no dey")
 
-word = input("Enter keyword you want to ig")
-getweetkeywords(keyword=word, user="NAkufoAddo")
+# word = input("Enter keyword you want to ig")
+# getweetkeywords(keyword=word, user="kayjodan")
