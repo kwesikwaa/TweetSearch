@@ -38,7 +38,7 @@
         }
         button:hover{background-color: rgba(81, 81, 160, 0.527);}
         .container-jacket{
-            margin-top: 25px;
+            margin-top: 35px;
         }
         .container{
             position: relative;
@@ -47,7 +47,7 @@
             width: 60%;
             border-radius: 5px;
             padding: 0.5px 15px;
-            box-shadow: 5px 7px 10px black;
+            box-shadow: 5px 7px 10px rgb(48, 48, 48);
         }
         .line{
             width: 100%;
@@ -57,13 +57,16 @@
         .bottomstuff{
             display: flex;
             justify-content:space-between;
+            font-style: italic;
+            font-size: small;
         }
         .dp{
             position: absolute;
             width: 60px;
             height: 60px;
             border-radius: 60px;
-            background-color: rgba(43, 43, 146, 1);
+            background-color: white;
+            border: 2px solid rgb(26, 26, 104);
             left: -30px;
             top: -30px;
             margin: 10px;
@@ -76,51 +79,96 @@
             width: 80%;
             height: 80%;
             border-radius: 60px;
-            background-color: white;
         }
         .naming{
             margin-left: 30px;
             margin-top: 5px;
         }
+        .dp-inner img{
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+        }
+        h1, .status{
+            color: white;
+            text-align: center;
+        }
+        .arena{
+            display: grid;
+            grid-template-columns: auto auto;
+        }
         
     </style>
 </head>
 <body>
-    <div x-data="{user:'', keyword:'', results:[], addretweets:false}" class="box">
-        <form x-o:submit.prevent>
-            <input x-model='user' type="text" placeholder="enter twitter handle here">
-            <input x-model='keyword' type="text" placeholder="enter keyword you want to search">
+    
+    <div x-data="everything()" class="box">
+        <form x-on:submit.prevent="search()">
+            <h1>RECEIPT CENTRAL</h1>
+            <input x-model='tweetrequest.at' type="text" placeholder="enter twitter handle">
+            <input x-model='tweetrequest.keyword' type="text" placeholder="enter keyword">
             <div>
-                <input v-model="addretweets" type="checkbox" name="retweets">
-                <label for="retweets">include retweets in the search?</label>
+                <input x-model="tweetrequest.addrts" type="checkbox" name="retweets">
+                <label for="retweets">include retweets</label>
             </div>
-            <button @click='' >search</button>
+            <button>search</button>
+            <p x-show="!searching" class="status"><span x-text="results.length"></span> tweets matched</p>
+            <p x-show="searching" class="status">searching....</p>
         </form>
-        <div class="container-jacket">
-            <div class="container">
-                <div class="dp">
-                    <div class="dp-inner"></div>
-                </div>
-                <div class="naming">
-                    <div>@handlehere</div>
-                    <div>sceennamehere</div>
-                </div>
-                <div class="tweet">
-                    <p>asdfffffffff fffffffffffffffffaaaaaaa aaaaasadff fffffffffffffffffffff fffffffffffffffffffff fffffffffffffffffffff ffffffffffffffffff ffffffffffffffsadfff fffffffffffffffff ffffffffffffffffffff ffffffffffsadffffff fsadfsdfafsdfsdaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaa aaaaaaaaa</p>
-                </div>
-                <div class="line"></div>
-                <div class="bottomstuff">
-                    <p>date</p>
-                    <p>likes</p>
-                    <p>retweets</p>
-                </div>
-            </div>
-        </div>
         <div class="arena">
             <template x-for="result in results">
-
+                <div class="container-jacket">
+                    <div class="container">
+                        <div class="dp">
+                            <div class="dp-inner" ><img :src="result.dp" alt=""></div>
+                        </div>
+                        <div class="naming">
+                            <div x-text="result.at">@handlehere</div>
+                            <div x-text="result.name">sceennamehere</div>
+                        </div>
+                        <div class="tweet">
+                            <p x-text="result.tweet">asdfffffffff fffffffffffffffffaaaaaaa aaaaasadff fffffffffffffffffffff fffffffffffffffffffff fffffffffffffffffffff ffffffffffffffffff ffffffffffffffsadfff fffffffffffffffff ffffffffffffffffffff ffffffffffsadffffff fsadfsdfafsdfsdaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaa aaaaaaaaa</p>
+                        </div>
+                        <div class="line"></div>
+                        <div class="bottomstuff">
+                            <p x-text="result.date">date</p>
+                            <p>likes: <span x-text="result.likes"></span></p>
+                            <p>retweets: <span x-text="result.retweets"></span></p>
+                        </div>
+                    </div>
+                </div>
             </template>
         </div>
     </div>
+    <script>
+        function everything(){
+            return{
+                results:[],
+                searching:false,
+                tweetrequest:{at:'', keyword:'',addrts:true},
+                async search(){
+                    if(this.tweetrequest.at.length >= 3 && this.tweetrequest.keyword.length >= 3){
+                        this.searching = true;
+                        console.log('akwaaba');
+                        console.log(this.tweetrequest);
+                        const data = await fetch('http://127.0.0.1:8000/api/v1/search',{method:'POST',headers:{'Content-Type': 'application/json'},body: JSON.stringify(this.tweetrequest)})
+                        const lota = await data.json()
+                        console.log(lota)
+                        if(lota !=null){
+                            this.searching = false;
+                            this.results = [];
+                            this.results = lota;
+                        }
+                        //return 
+                    }
+                },
+                check(){
+                    console.log(this.results);
+                    this.tweetrequest.addrts = !this.tweetrequest.addrts
+                }
+                
+            }
+        }
+    </script>
 </body>
 </html>

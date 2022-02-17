@@ -2,7 +2,21 @@ import tweepy
 from decouple import config
 from typing import Optional
 from pydantic import BaseModel
+from typing import List
 
+from fastapi import FastAPI, HTTPException, status
+from fastapi.responses import JSONResponse
+from fastapi.encoders import jsonable_encoder
+from fastapi.middleware.cors import CORSMiddleware
+
+app = FastAPI()
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins = ["*"],
+    allow_credentials = True,
+    allow_methods = ["*"],
+    allow_headers = ["*"]
+)
 
 apikey = config("APIKEY")
 apisecret = config("APIKEY_SECRET")
@@ -22,43 +36,55 @@ class Tweetdantic(BaseModel):
     retweets: int
     tweet: str
     url: str
+    date: str
 
 class Tweetrequest(BaseModel):
     at: str
     keyword: str
+    addrts: bool
 
 
 t = ('%a %d %b,%Y %I:%M %p')
 # m = api.mentions_timeline()
 
-def getweetkeywords(keyword: str, user: Optional[str]="twitter", addretweets: Optional[bool]=True):
-    # KEYWORD WAS HAVE A MIN OF THREE CHARACTERS
+# API 
+
+
+@app.get('/')
+def initt():
+    return{"Asay": "Akwaaba"}
+
+
+@app.post('/api/v1/search', response_model=List[Tweetdantic])
+async def getresults(inputs: Tweetrequest):
     basket = []
     try:
-        if(api.get_user(screen_name = user)):
-            x = api.user_timeline(screen_name=user, include_rts = addretweets,count = 200)
+        print('================')
+        print(f'at: {inputs.at} keyword: {inputs.keyword} retweets: {inputs.addrts} basket:{basket} ')
+        if(api.get_user(screen_name = inputs.at)):
+            print('valid handle')
+            x = api.user_timeline(screen_name=inputs.at, include_rts = inputs.addrts,count = 200)
             if(x is not None):
-                print(f'{len(x)} tweets dey')
-                print('started scanning...')
+                print('tweets dey')
                 for y in x:
-                    if(y.text.lower().find(keyword.lower()) != -1):
-                        basket.append(y)
-                        print(f'name: {y.user.name}')
-                        print(f'at: {y.user.screen_name}')
-                        print(y.text)
-                        print(f'profile url: {y.user.profile_image_url}')
-                        print(y.created_at.strftime(t))
-                        print(f'likes: {y.favorite_count}')
-                        print(f'retweets: {y.retweet_count}')
-                        print('---------------------')
-                # return basket   
+                    if(y.text.lower().find(inputs.keyword.lower()) != -1):
+                        a = Tweetdantic(
+                            dp = y.user.profile_image_url,
+                            at = y.user.screen_name,
+                            name = y.user.name,
+                            likes = y.favorite_count,
+                            retweets = y.retweet_count,
+                            tweet = y.text,
+                            url = '',
+                            date = y.created_at.strftime(t)
+                        )
+                        basket.append(a)
+                if(len(basket)==0):
+                    raise HTTPException(status_code=status.HTTP_204_NO_CONTENT,detail="Sorry, there is no such tweet")                                     
+                return basket  
             else: 
-                print('the person never tweet before')
-            
-            print(f'---{len(basket)} tweets matched the <<{keyword}>> keyword--- for user --> {user}') 
-            print('---OPERATION COMPLETE---') 
+                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Sorry there are zero tweets from this handle")            
     except:
-        print("User like that no dey")
+        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid handle")
 
-word = input("Enter keyword you want to ig")
-getweetkeywords(keyword=word,)
+
