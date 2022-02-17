@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RECEIPT CENTRAL</title>
+    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    <style>
+        body{
+            margin: auto;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            width: 40%;
+            margin: auto;
+        }
+        .box{
+            width: 60%;
+            margin: auto;
+            padding: 20px;
+            background-color: cornflowerblue;
+            border-radius: 5px;
+        }
+        input, button{
+            padding: 5px;
+            border-radius: 4px;
+            border: none;
+            margin-top: 6px;
+            margin-bottom: 6px;
+        }
+        label{color: white;}
+        button{
+            background-color: rgba(43, 43, 146, 0.527);
+            color: white;
+            cursor: pointer;
+        }
+        button:hover{background-color: rgba(81, 81, 160, 0.527);}
+        .container-jacket{
+            margin-top: 25px;
+        }
+        .container{
+            position: relative;
+            margin: auto;
+            background-color: whitesmoke;
+            width: 60%;
+            border-radius: 5px;
+            padding: 0.5px 15px;
+            box-shadow: 5px 7px 10px black;
+        }
+        .line{
+            width: 100%;
+            height: 3px;
+            background-color: rgba(43, 43, 146, 0.527);
+        }
+        .bottomstuff{
+            display: flex;
+            justify-content:space-between;
+        }
+        .dp{
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 60px;
+            background-color: rgba(43, 43, 146, 1);
+            left: -30px;
+            top: -30px;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dp-inner{
+            
+            width: 80%;
+            height: 80%;
+            border-radius: 60px;
+            background-color: white;
+        }
+        .naming{
+            margin-left: 30px;
+            margin-top: 5px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div x-data="{user:'', keyword:'', results:[], addretweets:false}" class="box">
+        <form x-o:submit.prevent>
+            <input x-model='user' type="text" placeholder="enter twitter handle here">
+            <input x-model='keyword' type="text" placeholder="enter keyword you want to search">
+            <div>
+                <input v-model="addretweets" type="checkbox" name="retweets">
+                <label for="retweets">include retweets in the search?</label>
+            </div>
+            <button @click='' >search</button>
+        </form>
+        <div class="container-jacket">
+            <div class="container">
+                <div class="dp">
+                    <div class="dp-inner"></div>
+                </div>
+                <div class="naming">
+                    <div>@handlehere</div>
+                    <div>sceennamehere</div>
+                </div>
+                <div class="tweet">
+                    <p>asdfffffffff fffffffffffffffffaaaaaaa aaaaasadff fffffffffffffffffffff fffffffffffffffffffff fffffffffffffffffffff ffffffffffffffffff ffffffffffffffsadfff fffffffffffffffff ffffffffffffffffffff ffffffffffsadffffff fsadfsdfafsdfsdaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaa aaaaaaaaa</p>
+                </div>
+                <div class="line"></div>
+                <div class="bottomstuff">
+                    <p>date</p>
+                    <p>likes</p>
+                    <p>retweets</p>
+                </div>
+            </div>
+        </div>
+        <div class="arena">
+            <template x-for="result in results">
+
+            </template>
+        </div>
+    </div>
+</body>
+</html>

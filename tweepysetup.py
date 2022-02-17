@@ -1,6 +1,6 @@
 import tweepy
 from decouple import config
-from typing import Optional, List
+from typing import Optional
 from pydantic import BaseModel
 
 
@@ -29,29 +29,24 @@ class Tweetrequest(BaseModel):
 
 
 t = ('%a %d %b,%Y %I:%M %p')
+# m = api.mentions_timeline()
 
-mytest = api.home_timeline()
-print(mytest[0].text)
-print(mytest[0].user.name)
-print(mytest[0].user.profile_image_url)
-print(mytest[0].favorite_count)
-
-
-def getweetkeywords(keyword: str, user: str):
+def getweetkeywords(keyword: str, user: Optional[str]="twitter", addretweets: Optional[bool]=True):
     # KEYWORD WAS HAVE A MIN OF THREE CHARACTERS
     basket = []
     try:
         if(api.get_user(screen_name = user)):
-            x = api.user_timeline(screen_name=user, include_rts = False, exclude_replies = True, count = 200)
+            x = api.user_timeline(screen_name=user, include_rts = addretweets,count = 200)
             if(x is not None):
                 print(f'{len(x)} tweets dey')
                 print('started scanning...')
                 for y in x:
                     if(y.text.lower().find(keyword.lower()) != -1):
                         basket.append(y)
+                        print(f'name: {y.user.name}')
+                        print(f'at: {y.user.screen_name}')
                         print(y.text)
                         print(f'profile url: {y.user.profile_image_url}')
-                        print(f'name: {y.user.name}')
                         print(y.created_at.strftime(t))
                         print(f'likes: {y.favorite_count}')
                         print(f'retweets: {y.retweet_count}')
@@ -65,5 +60,5 @@ def getweetkeywords(keyword: str, user: str):
     except:
         print("User like that no dey")
 
-# word = input("Enter keyword you want to ig")
-# getweetkeywords(keyword=word, user="kayjodan")
+word = input("Enter keyword you want to ig")
+getweetkeywords(keyword=word,)
