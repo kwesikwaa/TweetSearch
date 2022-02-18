@@ -20,9 +20,10 @@
             width: 60%;
             margin: auto;
             padding: 20px;
-            background-color: cornflowerblue;
+            background-color: rgb(35, 43, 59);
             border-radius: 5px;
         }
+    
         input, button{
             padding: 5px;
             border-radius: 4px;
@@ -32,11 +33,11 @@
         }
         label{color: white;}
         button{
-            background-color: rgba(43, 43, 146, 0.527);
+            background-color: rgba(35, 35, 226, 0.527);
             color: white;
             cursor: pointer;
         }
-        button:hover{background-color: rgba(81, 81, 160, 0.527);}
+        button:hover{background-color: rgba(128, 128, 170, 0.527);}
         .container-jacket{
             margin-top: 35px;
         }
@@ -47,7 +48,7 @@
             width: 60%;
             border-radius: 5px;
             padding: 0.5px 15px;
-            box-shadow: 5px 7px 10px rgb(48, 48, 48);
+            box-shadow: 5px 7px 10px rgb(77, 43, 54);
         }
         .line{
             width: 100%;
@@ -97,7 +98,41 @@
             display: grid;
             grid-template-columns: auto auto;
         }
-        
+        @media screen and (max-width:550px) {
+           body{
+               display: flex;
+               justify-content: center;
+           }
+            .arena{
+                display: grid;
+                grid-template-columns: auto;
+            }
+            form{
+                display: flex;
+                flex-direction: column;
+                width: 80%;
+                margin: auto;
+            }
+            .box{
+                width: 100%;
+                margin: auto;
+                padding: 20px;
+                background-color: rgb(35, 43, 59);
+                border-radius: 5px;
+            }
+            .container-jacket{
+                margin-top: 35px;
+            }
+            .container{
+                position: relative;
+                margin: auto;
+                background-color: whitesmoke;
+                width: 60%;
+                border-radius: 5px;
+                padding: 0.5px 15px;
+                box-shadow: 5px 7px 10px rgb(77, 43, 54);
+            }
+        }
     </style>
 </head>
 <body>
@@ -157,14 +192,14 @@
                         this.searching = true;
                         try{
                             const data = await fetch('http://127.0.0.1:8000/api/v1/search',{method:'POST',headers:{'Content-Type': 'application/json'},body: JSON.stringify(this.tweetrequest)});
-                            if(data.status === 200){
+                            if(data.ok ){
                                 this.searching = false;
                                 this.results = [];
                                 const lota = await data.json()
                                 this.results = lota;
                             }
                             else{
-                                throw new Error()
+                                throw new Error(data.status, data.statusText);
                             }
                         }
                         catch(error){
