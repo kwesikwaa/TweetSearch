@@ -5,8 +5,6 @@ from pydantic import BaseModel
 from typing import List
 
 from fastapi import FastAPI, HTTPException, status
-from fastapi.responses import JSONResponse
-from fastapi.encoders import jsonable_encoder
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -41,7 +39,7 @@ class Tweetdantic(BaseModel):
 class Tweetrequest(BaseModel):
     at: str
     keyword: str
-    addrts: bool
+    addrts: Optional[bool]=True
 
 
 t = ('%a %d %b,%Y %I:%M %p')
