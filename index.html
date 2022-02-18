@@ -112,8 +112,12 @@
                 <label for="retweets">include retweets</label>
             </div>
             <button>search</button>
-            <p x-show="!searching" class="status"><span x-text="results.length"></span> tweets matched</p>
-            <p x-show="searching" class="status">searching....</p>
+            <div x-show='!error'>
+                <p x-show="!searching" class="status"><span x-text="results.length"></span> tweets matched</p>
+                <p x-show="searching" class="status">searching....</p>    
+            </div>
+            <p x-show="error" class="status">Sorry Invalid handle or tweet doesnt exist</p>    
+            
         </form>
         <div class="arena">
             <template x-for="result in results">
@@ -144,29 +148,34 @@
         function everything(){
             return{
                 results:[],
+                error: false,
                 searching:false,
                 tweetrequest:{at:'', keyword:'',addrts:true},
                 async search(){
                     if(this.tweetrequest.at.length >= 3 && this.tweetrequest.keyword.length >= 3){
+                        this.error = false;
                         this.searching = true;
-                        console.log('akwaaba');
-                        console.log(this.tweetrequest);
-                        const data = await fetch('http://127.0.0.1:8000/api/v1/search',{method:'POST',headers:{'Content-Type': 'application/json'},body: JSON.stringify(this.tweetrequest)})
-                        const lota = await data.json()
-                        console.log(lota)
-                        if(lota !=null){
-                            this.searching = false;
+                        try{
+                            const data = await fetch('http://127.0.0.1:8000/api/v1/search',{method:'POST',headers:{'Content-Type': 'application/json'},body: JSON.stringify(this.tweetrequest)});
+                            if(data.status === 200){
+                                this.searching = false;
+                                this.results = [];
+                                const lota = await data.json()
+                                this.results = lota;
+                            }
+                            else{
+                                throw new Error()
+                            }
+                        }
+                        catch(error){
+                            this.error = true;
                             this.results = [];
-                            this.results = lota;
+                            console.log(error);
+                            
                         }
                         //return 
                     }
                 },
-                check(){
-                    console.log(this.results);
-                    this.tweetrequest.addrts = !this.tweetrequest.addrts
-                }
-                
             }
         }
     </script>

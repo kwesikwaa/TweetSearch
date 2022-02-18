@@ -59,32 +59,28 @@ def initt():
 async def getresults(inputs: Tweetrequest):
     basket = []
     try:
-        print('================')
-        print(f'at: {inputs.at} keyword: {inputs.keyword} retweets: {inputs.addrts} basket:{basket} ')
-        if(api.get_user(screen_name = inputs.at)):
-            print('valid handle')
-            x = api.user_timeline(screen_name=inputs.at, include_rts = inputs.addrts,count = 200)
-            if(x is not None):
-                print('tweets dey')
-                for y in x:
-                    if(y.text.lower().find(inputs.keyword.lower()) != -1):
-                        a = Tweetdantic(
-                            dp = y.user.profile_image_url,
-                            at = y.user.screen_name,
-                            name = y.user.name,
-                            likes = y.favorite_count,
-                            retweets = y.retweet_count,
-                            tweet = y.text,
-                            url = '',
-                            date = y.created_at.strftime(t)
-                        )
-                        basket.append(a)
-                if(len(basket)==0):
-                    raise HTTPException(status_code=status.HTTP_204_NO_CONTENT,detail="Sorry, there is no such tweet")                                     
-                return basket  
-            else: 
-                raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST,detail="Sorry there are zero tweets from this handle")            
+        api.get_user(screen_name = inputs.at)   
     except:
-        raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="Invalid handle")
-
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Sorry invalid handle")                    
+    else:
+        x = api.user_timeline(screen_name=inputs.at, include_rts = inputs.addrts,count = 500)
+        print(len(x))
+        if(x is not None):
+            for y in x:
+                if(y.text.lower().find(inputs.keyword.lower()) != -1):
+                    a = Tweetdantic(
+                        dp = y.user.profile_image_url,
+                        at = y.user.screen_name,
+                        name = y.user.name,
+                        likes = y.favorite_count,
+                        retweets = y.retweet_count,
+                        tweet = y.text,
+                        url = '',
+                        date = y.created_at.strftime(t)
+                    )
+                    basket.append(a)
+            if(len(basket)==0):
+                raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Sorry, there is no such tweet")                                     
+            return basket  
+        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Sorry there are zero tweets from this handle")            
 
