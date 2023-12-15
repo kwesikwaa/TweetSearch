@@ -5,10 +5,146 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>RECEIPT CENTRAL</title>
-    <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <!-- <script defer src="https://unpkg.com/alpinejs@3.x.x/dist/cdn.min.js"></script> -->
+    <script defer src="./cdn.min.js"></script>
+    <!-- <link rel="stylesheet" href="style.css"> -->
+    <style>
+        body{
+            margin: auto;
+            background-color: rgb(35, 43, 59);
+            font-family:'Courier New', Courier, monospace;
+        }
+        form{
+            display: flex;
+            flex-direction: column;
+            width: 40%;
+            margin: auto;
+        }
+        .box{
+            width: 60%;
+            margin: auto;
+            margin-top: 3rem;
+            padding: 1.5rem;
+            background-color: rgb(45, 54, 71);
+            border-radius: 0.5rem;
+        }
+        
+        input, button{
+            padding: 0.8rem;
+            border-radius: 0.2rem;
+            border: none;
+            margin-top: 0.4rem;
+            margin-bottom: 0.4rem;
+            font-size: large;
+        }
+        label{color: white;}
+        button{
+            background-color: rgba(46, 89, 168, 0.89);
+            color: white;
+            cursor: pointer;
+            font-size: larger;
+        }
+        button:hover{background-color: rgba(128, 128, 170, 0.527);}
+        .container-jacket{
+            margin-top: 35px;
+            
+        }
+        .container{
+            position: relative;
+            margin: auto;
+            background-color: whitesmoke;
+            width: 60%;
+            border-radius: 0.3rem;
+            padding: 0.5px 15px;
+            box-shadow: 5px 7px 10px rgb(31, 33, 48);
+        }
+        .line{
+            width: 100%;
+            height: 0.15rem;
+            background-color: rgba(43, 43, 146, 0.527);
+        }
+        .bottomstuff{
+            display: flex;
+            justify-content:space-between;
+            font-style: italic;
+            font-size: small;
+        }
+        .dp{
+            position: absolute;
+            width: 60px;
+            height: 60px;
+            border-radius: 60px;
+            background-color: white;
+            border: 2px solid rgb(26, 26, 104);
+            left: -30px;
+            top: -30px;
+            margin: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .dp-inner{
+            
+            width: 90%;
+            height: 90%;
+            border-radius: 100%;
+        }
+        .naming{
+            margin-left: 30px;
+            margin-top: 5px;
+        }
+        .dp-inner img{
+            width: 100%;
+            height: 100%;
+            border-radius: 100%;
+        }
+        h1, .status{
+            color: white;
+            text-align: center;
+        }
+        .arena{
+            display: grid;
+            grid-template-columns: repeat(2,1fr);
+            
+        }
+        @media screen and (max-width:550px) {
+           body{
+               display: flex;
+               justify-content: center;
+           }
+            .arena{
+                display: grid;
+                grid-template-columns: auto;
+            }
+            form{
+                display: flex;
+                flex-direction: column;
+                width: 80%;
+                margin: auto;
+            }
+            .box{
+                width: 100%;
+                margin: auto;
+                padding: 20px;
+                background-color: rgb(35, 43, 59);
+                border-radius: 5px;
+            }
+            .container-jacket{
+                margin-top: 35px;
+            }
+            .container{
+                position: relative;
+                margin: auto;
+                background-color: whitesmoke;
+                width: 60%;
+                border-radius: 5px;
+                padding: 0.5px 15px;
+                box-shadow: 5px 7px 10px rgb(77, 43, 54);
+            }
+        }
+    </style>
 </head>
-<body>
+<body >
     
     <div x-data="everything()" class="box">
         <form x-on:submit.prevent="search()">
@@ -21,10 +157,10 @@
             </div>
             <button>search</button>
             <div x-show='!error'>
-                <p x-show="!searching" class="status"><span x-text="results.length"></span> tweets matched</p>
+                <p x-show="!searching && results.length" class="status"><span x-text="results.length"></span> matching tweets found</p>
                 <p x-show="searching" class="status">searching....</p>    
             </div>
-            <p x-show="error" class="status">Sorry Invalid handle or tweet doesnt exist</p>    
+            <p x-show="error" class="status" x-text="errorMessage" style=" color:rgb(192, 117, 117);"></p>    
             
         </form>
         <div class="arena">
@@ -35,11 +171,11 @@
                             <div class="dp-inner" ><img :src="result.dp" alt=""></div>
                         </div>
                         <div class="naming">
-                            <div x-text="result.at">@handlehere</div>
-                            <div x-text="result.name">sceennamehere</div>
+                            <div x-text="result.at"></div>
+                            <div x-text="result.name"></div>
                         </div>
                         <div class="tweet">
-                            <p x-text="result.tweet">asdfffffffff fffffffffffffffffaaaaaaa aaaaasadff fffffffffffffffffffff fffffffffffffffffffff fffffffffffffffffffff ffffffffffffffffff ffffffffffffffsadfff fffffffffffffffff ffffffffffffffffffff ffffffffffsadffffff fsadfsdfafsdfsdaaa aaaaaaaaaaaaaaaaaaa aaaaaaaaaaaaaaaaa aaaaaaaaa</p>
+                            <p x-text="result.tweet"></p>
                         </div>
                         <div class="line"></div>
                         <div class="bottomstuff">
@@ -55,10 +191,52 @@
     <script>
         function everything(){
             return{
-                results:[],
+                results:[
+                    // { 
+                    //     dp: './frog.jpg',
+                    //     at: '@handlename',
+                    //     name: 'Name here',
+                    //     likes: 150,
+                    //     retweets: 10,
+                    //     tweet: 'some nonfa tweet',
+                    //     url: 'url url rul',
+                    //     date: 'date of tweet'       
+                    // },
+                    // { 
+                    //     dp: './frog.jpg',
+                    //     at: '@handlename',
+                    //     name: 'Name here',
+                    //     likes: 150,
+                    //     retweets: 10,
+                    //     tweet: 'some no f sfss fsf sf sfsfsa f  fs fsfs f s fs fds fsdfs  fs fs fd fds fsdfs fd fdsf sf sd fsd fsd fsd fs fsd fsd fd sfs d f snfa tweet',
+                    //     url: 'url url rul',
+                    //     date: 'date of tweet'       
+                    // },
+                    // { 
+                    //     dp: './frog.jpg',
+                    //     at: '@handlename',
+                    //     name: 'Name here',
+                    //     likes: 150,
+                    //     retweets: 10,
+                    //     tweet: 'some no f sfss fsf sf sfsfsa f  fs fsfs f s fs fds fsdfs  fs fs fd fds fsdfs fd fdsf sf sd fsd fsd fsd fs fsd fsd fd sfs d f snfa tweet',
+                    //     url: 'url url rul',
+                    //     date: 'date of tweet'       
+                    // },
+                    // { 
+                    //     dp: './frog.jpg',
+                    //     at: '@handlename',
+                    //     name: 'Name here',
+                    //     likes: 150,
+                    //     retweets: 10,
+                    //     tweet: 'some nonfa tweet',
+                    //     url: 'url url rul',
+                    //     date: 'date of tweet'       
+                    // },
+                ],
                 error: false,
                 searching:false,
                 tweetrequest:{at:'', keyword:'',addrts:true},
+                errorMessage: '',
                 async search(){
                     if(this.tweetrequest.at.length >= 3 && this.tweetrequest.keyword.length >= 3){
                         this.error = false;
@@ -72,13 +250,15 @@
                                 this.results = lota;
                             }
                             else{
-                                throw new Error(data.status, data.statusText);
+                                throw new Error(data.status);
                             }
                         }
                         catch(error){
+                            console.log(error)
                             this.error = true;
                             this.results = [];
-                            console.log(error);
+                            this.errorMessage = 'Sorry check your connection or server must be down'
+                            
                             
                         }
                         //return 

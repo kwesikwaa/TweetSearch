@@ -1,0 +1,3 @@
+fastapi
+tweepyy
+uvicorn
