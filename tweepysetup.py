@@ -30,9 +30,10 @@ bearer = config('bear')
 # client = tweepy.Client(bearer_token=bearer)
 
 # auth = tweepy.OAuth2BearerHandler(bearer)
-auth = tweepy.OAuth1UserHandler(apikey,apisecret,access_token,access_token_secret)
+
+# auth = tweepy.OAuth1UserHandler(apikey,apisecret,access_token,access_token_secret)
 # auth = tweepy.OAuthHandler(apikey, apisecret)  old 
-# auth = tweepy.OAuth2AppHandler(apikey, apisecret)
+auth = tweepy.OAuth2AppHandler(apikey, apisecret)
 # auth.set_access_token(access_token,access_token_secret)
 
 
@@ -65,14 +66,14 @@ t = ('%a %d %b,%Y %I:%M %p')
 @app.post('/api/v1/search', response_model=List[Tweetdantic])
 async def getresults(inputs: Tweetrequest):
     basket = []
-    try:
-        print(inputs)
-        # user = await api.get_user(screen_name=inputs.at)
-        # if user:
-        await diggint(inputs,basket)
-        
-    except:
-        raise HTTPException(status_code=status.HTTP_404_NOT_FOUND,detail="Sorry invalid handle")                    
+
+    print(api.get_user(username=inputs.at))
+    print(inputs)
+    # user = await api.get_user(screen_name=inputs.at)
+    # if user:
+    # await diggint(inputs,basket)
+    
+    
     
 
 async def diggint(inputs,basket):
