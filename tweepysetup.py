@@ -31,13 +31,13 @@ bearer = config('bear')
 
 # auth = tweepy.OAuth2BearerHandler(bearer)
 
-# auth = tweepy.OAuth1UserHandler(apikey,apisecret,access_token,access_token_secret)
+auth = tweepy.OAuth1UserHandler(apikey,apisecret,access_token,access_token_secret)
 # auth = tweepy.OAuthHandler(apikey, apisecret)  old 
-auth = tweepy.OAuth2AppHandler(apikey, apisecret)
+# auth = tweepy.OAuth2AppHandler(apikey, apisecret)
 # auth.set_access_token(access_token,access_token_secret)
 
 
-api = tweepy.API(auth)
+api = tweepy.API(auth, wait_on_rate_limit=True)
 
 class Tweetdantic(BaseModel):
     dp: str

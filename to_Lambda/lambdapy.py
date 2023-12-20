@@ -22,7 +22,8 @@ bearer = os.environ['bear']
 
 
 auth = tweepy.OAuth1UserHandler(consumer_key=apikey,consumer_secret=apisecret, access_token=access_token, access_token_secret=access_token_secret)
-api = tweepy.API(auth)
+
+api = tweepy.API(auth,wait_on_rate_limit=True)
 
 basket = []
 t = ('%a %d %b,%Y %I:%M %p')
